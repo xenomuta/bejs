@@ -68,13 +68,6 @@ BeJS = (function() {
     return value.toString().replace(this.injection_rx, "\\$1");
   };
 
-  BeJS.prototype.slug = function(value) {
-    if (value === null) {
-      return '';
-    }
-    return value.toString().toLowerCase().replace(/\W+/g, '_').replace(/[^\W]$/, '');
-  };
-
   BeJS.prototype.strip = function(value) {
     if (value === null) {
       return '';
@@ -82,11 +75,18 @@ BeJS = (function() {
     return value.toString().replace(/(^ +| +$)/g, '');
   };
 
+  BeJS.prototype.slug = function(value) {
+    if (value === null) {
+      return '';
+    }
+    return this.strip(value.toString().toLowerCase()).replace(/\W+/g, '_').replace(/_+$/g, '');
+  };
+
   BeJS.prototype.capitalized = function(value) {
     if (value === null) {
       return '';
     }
-    return value.toString().replace(/(\b[a-z])/g, '_BeJS_CAP_$1').split(/_BeJS_CAP_/).map(function(w) {
+    return value.toString().toLowerCase().replace(/(\b[a-z])/g, '_BeJS_CAP_$1').split(/_BeJS_CAP_/).map(function(w) {
       return (w[0] || '').toUpperCase() + w.substring(1);
     }).join('');
   };

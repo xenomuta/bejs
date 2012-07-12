@@ -39,18 +39,15 @@ class BeJS
   safe: (value) ->
     return '' if value is null
     value.toString().replace this.injection_rx, "\\$1"
-    
-  slug: (value) ->
-    return '' if value is null
-    value.toString().toLowerCase().replace(/\W+/g, '_').replace /[^\W]$/, ''
-    
   strip: (value) ->
     return '' if value is null
     value.toString().replace /(^ +| +$)/g, ''
-    
+  slug: (value) ->
+    return '' if value is null
+    this.strip(value.toString().toLowerCase()).replace(/\W+/g, '_').replace(/_+$/g, '')
   capitalized: (value) ->
     return '' if value is null
-    value.toString().replace(/(\b[a-z])/g, '_BeJS_CAP_$1').split(/_BeJS_CAP_/).map((w) -> (w[0] or '').toUpperCase() + w.substring 1).join('')
+    value.toString().toLowerCase().replace(/(\b[a-z])/g, '_BeJS_CAP_$1').split(/_BeJS_CAP_/).map((w) -> (w[0] or '').toUpperCase() + w.substring 1).join('')
 
   ###
   Monkey Patcher

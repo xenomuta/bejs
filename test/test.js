@@ -1,5 +1,5 @@
 var should = require('should'),
-    be = require('../dist/be.js');
+    be = require('../dist/be');
 
 describe("Be", function(){
   describe(" strip",function(){
@@ -12,7 +12,7 @@ describe("Be", function(){
   })
   describe(" slug",function(){
     it('should remove leading and trailing whitespace', function(){
-      be.slug(' tests string ').should.equal('test string')
+      be.slug(' tests string ').should.equal('tests_string')
     })
     it('should replace whitespace in the middle with underscore', function(){
       be.slug('test is string').should.equal('test_is_string')
@@ -21,7 +21,7 @@ describe("Be", function(){
       be.slug('test, is string!!!').should.equal('test_is_string')
     })
     it('should downcase', function(){
-      be.slug('Test is String').should.equal('test is string')
+      be.slug('Test is String').should.equal('test_is_string')
     })
   })
   describe(" capitalized",function(){
