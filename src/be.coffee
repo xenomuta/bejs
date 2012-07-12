@@ -6,10 +6,14 @@ class BeJS
   Internal stuff
   ###
   injection_rx: new RegExp '([\'"<>\\$`\\[\\]()\\\\\\;%\\+])', 'g'
+  
   environment: 'browser'
+  
   _quiet: true
+  
   verbose: ->
     this._quiet = false
+    
   quiet: ->
     this._quiet = true
 
@@ -31,15 +35,19 @@ class BeJS
   paranoid_safe: (value) ->
     return '' if value is null
     value.toString().replace this.injection_rx, ''
+    
   safe: (value) ->
     return '' if value is null
     value.toString().replace this.injection_rx, "\\$1"
+    
   slug: (value) ->
     return '' if value is null
     value.toString().toLowerCase().replace(/\W+/g, '_').replace /[^\W]$/, ''
+    
   strip: (value) ->
     return '' if value is null
     value.toString().replace /(^ +| +$)/g, ''
+    
   capitalized: (value) ->
     return '' if value is null
     value.toString().replace(/(\b[a-z])/g, '_BeJS_CAP_$1').split(/_BeJS_CAP_/).map((w) -> (w[0] or '').toUpperCase() + w.substring 1).join('')
