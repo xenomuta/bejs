@@ -8,9 +8,29 @@ BeJS = (function() {
 
   function BeJS() {}
 
-  BeJS.prototype.injection_rx = new RegExp('\'"\\\;%+()', 'g');
+  /*
+    Internal stuff
+  */
+
+
+  BeJS.prototype.injection_rx = new RegExp('([\'"<>\\$`\\[\\]()\\\\\\;%\\+])', 'g');
 
   BeJS.prototype.environment = 'browser';
+
+  BeJS.prototype._quiet = true;
+
+  BeJS.prototype.verbose = function() {
+    return this._quiet = false;
+  };
+
+  BeJS.prototype.quiet = function() {
+    return this._quiet = true;
+  };
+
+  /*
+    Number functions
+  */
+
 
   BeJS.prototype.time = function(value) {
     var h, m, s;
@@ -29,65 +49,76 @@ BeJS = (function() {
     return "" + (h > 9 ? '' : '0') + h + ":" + (m > 9 ? '' : '0') + m + ":" + (s > 9 ? '' : '0') + s;
   };
 
+  /*
+    String functions
+  */
+
+
   BeJS.prototype.paranoid_safe = function(value) {
     if (value === null) {
       return '';
     }
-    return value.replace(injection_rx, '');
+    return value.toString().replace(this.injection_rx, '');
   };
 
   BeJS.prototype.safe = function(value) {
     if (value === null) {
       return '';
     }
-    return value.replace(injection_rx, "\\$1");
+    return value.toString().replace(this.injection_rx, "\\$1");
   };
 
   BeJS.prototype.slug = function(value) {
     if (value === null) {
       return '';
     }
-    return value.replace(/\W+/g, '_').replace(/[^\W]$/, '');
+    return value.toString().toLowerCase().replace(/\W+/g, '_').replace(/[^\W]$/, '');
   };
 
   BeJS.prototype.strip = function(value) {
     if (value === null) {
       return '';
     }
-    return value.replace(/(^ +| +$)/g, '');
+    return value.toString().replace(/(^ +| +$)/g, '');
   };
 
   BeJS.prototype.capitalized = function(value) {
     if (value === null) {
       return '';
     }
-    return value.replace(/(\b[a-z])/g, '_BeJS_CAP_$1').split(/_BeJS_CAP_/).map(function(w) {
+    return value.toString().replace(/(\b[a-z])/g, '_BeJS_CAP_$1').split(/_BeJS_CAP_/).map(function(w) {
       return (w[0] || '').toUpperCase() + w.substring(1);
     }).join('');
   };
 
+  /*
+    Monkey Patcher
+    Expands String and Number classes by embedding functions into their prototypes
+  */
+
+
   BeJS.prototype.monkey_patch = function(clazz) {
-    var k, patch, v, _results;
+    var k, v;
     if (clazz === null) {
       return null;
     }
     if (['String', 'Number'].indexOf(clazz.name) === -1) {
       throw new Error('can only patch String and Number');
     }
-    _results = [];
     for (k in be) {
       v = be[k];
       if (typeof v === 'function' && clazz.name.toLowerCase() === typeof (v(null))) {
-        console.log(">>> patching '", k, "' function into", clazz.name, "class");
-        patch = "be['" + k + "'](this)";
-        _results.push(clazz.prototype[k] = function() {
-          return eval(patch);
-        });
-      } else {
-        _results.push(void 0);
+        if (!this._quiet) {
+          console.log(">>> patching '", k, "' function into", clazz.name, "class");
+        }
+        eval(clazz.name + (".prototype['" + k + "'] = function () { return be['" + k + "'](this) };"));
       }
     }
-    return _results;
+    if (this._quiet) {
+      return void 0;
+    } else {
+      return clazz.name + ' patched!';
+    }
   };
 
   return BeJS;
@@ -99,4 +130,6 @@ be = new BeJS;
 if ((typeof process !== "undefined" && process !== null) && process.title === 'node') {
   BeJS.environment = 'node';
   module.exports = be;
+} else {
+  window.be = be;
 }
