@@ -4,7 +4,11 @@ Be.js
 class BeJS
   injection_rx: new RegExp '\'"\\\;%+()', 'g'
   environment: 'browser'
-    
+  _quiet: true
+  verbose: ->
+    this._quiet = false
+  quiet: ->
+    this._quiet = true
   time: (value) ->
     return 0 if value is null
     return [Number] if value is 'BeJS_monkey_patch'
@@ -33,10 +37,11 @@ class BeJS
     throw new Error('can only patch String and Number') if ['String', 'Number'].indexOf(clazz.name) is -1
     for k, v of be
       if typeof(v) is 'function' and clazz.name.toLowerCase() is typeof(v(null))
-        console.log ">>> patching '", k, "' function into", clazz.name, "class"
+        console.log(">>> patching '", k, "' function into", clazz.name, "class") if this._quiet
         patch = "be['" + k + "'](this)"
         clazz.prototype[k] = ->
           eval patch
+    if this._quiet then undefined else clazz.name + ' patched!'
 
 # Let me BeJS
 be = new BeJS
