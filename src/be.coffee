@@ -27,7 +27,8 @@ class BeJS
     s = Math.floor (value / 1000) % 60
     m = Math.floor ((value / 1000) / 60) % 60
     h = Math.floor ((value / 1000) / 60) / 60
-    return "#{if h > 9 then '' else '0'}#{h}:#{if m > 9 then '' else '0'}#{m}:#{if s > 9 then '' else '0'}#{s}"    
+
+    "#{if h > 9 then '' else '0'}#{h}:#{if m > 9 then '' else '0'}#{m}:#{if s > 9 then '' else '0'}#{s}"    
     
   ###
   String functions
@@ -53,6 +54,7 @@ class BeJS
   Monkey Patcher
   Expands String and Number classes by embedding functions into their prototypes
   ###
+
   monkey_patch: (clazz) ->
     return null if clazz is null
     throw new Error('can only patch String and Number') if ['String', 'Number'].indexOf(clazz.name) is -1
