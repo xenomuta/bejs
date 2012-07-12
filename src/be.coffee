@@ -12,22 +12,28 @@ class BeJS
     s = Math.floor (value / 1000) % 60
     m = Math.floor ((value / 1000) / 60) % 60
     h = Math.floor ((value / 1000) / 60) / 60
-    return "#{if h > 9 then '' else '0'}#{h}:#{if m > 9 then '' else '0'}#{m}:#{if s > 9 then '' else '0'}#{s}"    
+    return "#{if h > 9 then '' else '0'}#{h}:#{if m > 9 then '' else '0'}#{m}:#{if s > 9 then '' else '0'}#{s}"   
+     
   paranoid_safe: (value) ->
     return '' if value is null
     value.replace injection_rx, ''
+    
   safe: (value) ->
     return '' if value is null
     value.replace injection_rx, "\\$1"
+    
   slug: (value) ->
     return '' if value is null
     value.replace(/\W+/g, '_').replace /[^\W]$/, ''
+    
   strip: (value) ->
     return '' if value is null
     value.replace /(^ +| +$)/g, ''
+    
   capitalized: (value) ->
     return '' if value is null
     value.replace(/(\b[a-z])/g, '_BeJS_CAP_$1').split(/_BeJS_CAP_/).map((w) -> (w[0] or '').toUpperCase() + w.substring 1).join('')
+    
   monkey_patch: (clazz) ->
     return null if clazz is null
     throw new Error('can only patch String and Number') if ['String', 'Number'].indexOf(clazz.name) is -1
