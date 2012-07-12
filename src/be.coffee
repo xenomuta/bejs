@@ -38,10 +38,7 @@ class BeJS
     for k, v of be
       if typeof(v) is 'function' and clazz.name.toLowerCase() is typeof(v(null))
         console.log(">>> patching '", k, "' function into", clazz.name, "class") unless this._quiet
-        patch = "be['" + k + "'](this)"
-        console.log patch unless this._quiet
-        clazz.prototype[k] = ->
-          eval patch
+        eval clazz.name + ".prototype['#{k}'] = function () { return be['#{k}'](this) };"
     if this._quiet then undefined else clazz.name + ' patched!'
 
 # Let me BeJS
