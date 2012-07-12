@@ -87,10 +87,13 @@ BeJS = (function() {
     for (k in be) {
       v = be[k];
       if (typeof v === 'function' && clazz.name.toLowerCase() === typeof (v(null))) {
-        if (this._quiet) {
+        if (!this._quiet) {
           console.log(">>> patching '", k, "' function into", clazz.name, "class");
         }
-        patch = "be['" + k + "'](this)";
+        if (!this._quiet) {
+          patch = "be['" + k + "'](this)";
+        }
+        console.log(patch);
         clazz.prototype[k] = function() {
           return eval(patch);
         };
