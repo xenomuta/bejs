@@ -2,7 +2,7 @@
 Be.js
 ###
 class BeJS
-  injection_rx: new RegExp '\'"\\\;%+()', 'g'
+  injection_rx: new RegExp '\'"<>\$`\[\]()\\\;%\+', 'g'
   environment: 'browser'
   _quiet: true
   verbose: ->
