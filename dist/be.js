@@ -8,7 +8,12 @@ BeJS = (function() {
 
   function BeJS() {}
 
-  BeJS.prototype.injection_rx = new RegExp('\'"\\\;%+()', 'g');
+  /*
+    Internal stuff
+  */
+
+
+  BeJS.prototype.injection_rx = new RegExp('([\'"<>\\$`\\[\\]()\\\\\\;%\\+])', 'g');
 
   BeJS.prototype.environment = 'browser';
 
@@ -21,6 +26,11 @@ BeJS = (function() {
   BeJS.prototype.quiet = function() {
     return this._quiet = true;
   };
+
+  /*
+    Number functions
+  */
+
 
   BeJS.prototype.time = function(value) {
     var h, m, s;
@@ -39,42 +49,53 @@ BeJS = (function() {
     return "" + (h > 9 ? '' : '0') + h + ":" + (m > 9 ? '' : '0') + m + ":" + (s > 9 ? '' : '0') + s;
   };
 
+  /*
+    String functions
+  */
+
+
   BeJS.prototype.paranoid_safe = function(value) {
     if (value === null) {
       return '';
     }
-    return value.replace(injection_rx, '');
+    return value.toString().replace(this.injection_rx, '');
   };
 
   BeJS.prototype.safe = function(value) {
     if (value === null) {
       return '';
     }
-    return value.replace(injection_rx, "\\$1");
+    return value.toString().replace(this.injection_rx, "\\$1");
   };
 
   BeJS.prototype.slug = function(value) {
     if (value === null) {
       return '';
     }
-    return value.replace(/\W+/g, '_').replace(/[^\W]$/, '');
+    return value.toString().toLowerCase().replace(/\W+/g, '_').replace(/[^\W]$/, '');
   };
 
   BeJS.prototype.strip = function(value) {
     if (value === null) {
       return '';
     }
-    return value.replace(/(^ +| +$)/g, '');
+    return value.toString().replace(/(^ +| +$)/g, '');
   };
 
   BeJS.prototype.capitalized = function(value) {
     if (value === null) {
       return '';
     }
-    return value.replace(/(\b[a-z])/g, '_BeJS_CAP_$1').split(/_BeJS_CAP_/).map(function(w) {
+    return value.toString().replace(/(\b[a-z])/g, '_BeJS_CAP_$1').split(/_BeJS_CAP_/).map(function(w) {
       return (w[0] || '').toUpperCase() + w.substring(1);
     }).join('');
   };
+
+  /*
+    Monkey Patcher
+    Expands String and Number classes by embedding functions into their prototypes
+  */
+
 
   BeJS.prototype.monkey_patch = function(clazz) {
     var k, v;
@@ -109,4 +130,6 @@ be = new BeJS;
 if ((typeof process !== "undefined" && process !== null) && process.title === 'node') {
   BeJS.environment = 'node';
   module.exports = be;
+} else {
+  window.be = be;
 }
