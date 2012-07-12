@@ -6,25 +6,38 @@ var BeJS, be;
 
 BeJS = (function() {
 
-  function BeJS() {}
+  BeJS.injection_rx = new RegExp('([\'"<>\\$`\\[\\]()\\\\\\;%\\+])', 'g');
 
-  /*
-    Internal stuff
-  */
+  BeJS.version = '0.1.0';
 
+  BeJS.quiet = true;
 
-  BeJS.prototype.injection_rx = new RegExp('([\'"<>\\$`\\[\\]()\\\\\\;%\\+])', 'g');
-
-  BeJS.prototype.environment = 'browser';
-
-  BeJS.prototype._quiet = true;
+  function BeJS(doMonkeyPatch, verbose) {
+    var clazz, _i, _len, _ref;
+    if (doMonkeyPatch == null) {
+      doMonkeyPatch = false;
+    }
+    if (verbose == null) {
+      verbose = false;
+    }
+    if (doMonkeyPatch) {
+      _ref = [String, Number];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        clazz = _ref[_i];
+        this.monkeyPatch(clazz);
+      }
+    }
+    this.environment = 'browser';
+    BeJS.quiet = !verbose;
+    this.environment = (typeof process !== "undefined" && process !== null) && process.title === 'node' ? 'node' : 'browser';
+  }
 
   BeJS.prototype.verbose = function() {
-    return this._quiet = false;
+    return BeJS.quiet = false;
   };
 
   BeJS.prototype.quiet = function() {
-    return this._quiet = true;
+    return BeJS.quiet = true;
   };
 
   /*
@@ -32,7 +45,7 @@ BeJS = (function() {
   */
 
 
-  BeJS.prototype.time = function(value) {
+  BeJS.prototype.shownAsTime = function(value) {
     var h, m, s;
     if (value === null) {
       return 0;
@@ -54,7 +67,7 @@ BeJS = (function() {
   */
 
 
-  BeJS.prototype.paranoid_safe = function(value) {
+  BeJS.prototype.sanitized = function(value) {
     if (value === null) {
       return '';
     }
@@ -68,18 +81,18 @@ BeJS = (function() {
     return value.toString().replace(this.injection_rx, "\\$1");
   };
 
-  BeJS.prototype.strip = function(value) {
+  BeJS.prototype.stripped = function(value) {
     if (value === null) {
       return '';
     }
     return value.toString().replace(/(^ +| +$)/g, '');
   };
 
-  BeJS.prototype.slug = function(value) {
+  BeJS.prototype.slugified = function(value) {
     if (value === null) {
       return '';
     }
-    return this.strip(value.toString().toLowerCase()).replace(/\W+/g, '_').replace(/_+$/g, '');
+    return this.stripped(value.toString().toLowerCase()).replace(/\W+/g, '_').replace(/_+$/g, '');
   };
 
   BeJS.prototype.capitalized = function(value) {
@@ -97,7 +110,7 @@ BeJS = (function() {
   */
 
 
-  BeJS.prototype.monkey_patch = function(clazz) {
+  BeJS.prototype.monkeyPatched = function(clazz) {
     var k, v;
     if (clazz === null) {
       return null;
@@ -108,13 +121,13 @@ BeJS = (function() {
     for (k in be) {
       v = be[k];
       if (typeof v === 'function' && clazz.name.toLowerCase() === typeof (v(null))) {
-        if (!this._quiet) {
+        if (!BeJS.quiet) {
           console.log(">>> patching '", k, "' function into", clazz.name, "class");
         }
         eval(clazz.name + (".prototype['" + k + "'] = function () { return be['" + k + "'](this) };"));
       }
     }
-    if (this._quiet) {
+    if (this.be_quiet) {
       return void 0;
     } else {
       return clazz.name + ' patched!';
@@ -125,10 +138,9 @@ BeJS = (function() {
 
 })();
 
-be = new BeJS;
+be = new BeJS();
 
-if ((typeof process !== "undefined" && process !== null) && process.title === 'node') {
-  BeJS.environment = 'node';
+if (be.environment === 'node') {
   module.exports = be;
 } else {
   window.be = be;

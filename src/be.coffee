@@ -2,25 +2,30 @@
 Be.js
 ###
 class BeJS
-  ###
-  Internal stuff
-  ###
-  injection_rx: new RegExp '([\'"<>\\$`\\[\\]()\\\\\\;%\\+])', 'g'
+  # Static class properties
+  this.injection_rx = new RegExp '([\'"<>\\$`\\[\\]()\\\\\\;%\\+])', 'g'
+  this.version = '0.1.0'  
+  this.quiet = true
   
-  environment: 'browser'
-  
-  _quiet: true
+  # Constructor
+  constructor: (doMonkeyPatch=false, verbose=false) ->
+    @monkeyPatch(clazz) for clazz in [String, Number] if doMonkeyPatch
+    @environment = 'browser'
+    BeJS.quiet = !verbose
+
+    # Am I running on Node.js or browser???
+    @environment = if process? and process.title is 'node' then 'node' else 'browser'
   
   verbose: ->
-    this._quiet = false
+    BeJS.quiet = false
     
   quiet: ->
-    this._quiet = true
+    BeJS.quiet = true
 
   ###
   Number functions
   ###
-  time: (value) ->
+  shownAsTime: (value) ->
     return 0 if value is null
     return [Number] if value is 'BeJS_monkey_patch'
     return '00:00:00' if value is 0 or (typeof(value) is not 'number')
@@ -33,19 +38,22 @@ class BeJS
   ###
   String functions
   ###
-  paranoid_safe: (value) ->
+  sanitized: (value) ->
     return '' if value is null
     value.toString().replace this.injection_rx, ''
     
   safe: (value) ->
     return '' if value is null
     value.toString().replace this.injection_rx, "\\$1"
-  strip: (value) ->
+    
+  stripped: (value) ->
     return '' if value is null
     value.toString().replace /(^ +| +$)/g, ''
-  slug: (value) ->
+    
+  slugified: (value) ->
     return '' if value is null
-    this.strip(value.toString().toLowerCase()).replace(/\W+/g, '_').replace(/_+$/g, '')
+    this.stripped(value.toString().toLowerCase()).replace(/\W+/g, '_').replace(/_+$/g, '')
+    
   capitalized: (value) ->
     return '' if value is null
     value.toString().toLowerCase().replace(/(\b[a-z])/g, '_BeJS_CAP_$1').split(/_BeJS_CAP_/).map((w) -> (w[0] or '').toUpperCase() + w.substring 1).join('')
@@ -55,21 +63,19 @@ class BeJS
   Expands String and Number classes by embedding functions into their prototypes
   ###
 
-  monkey_patch: (clazz) ->
+  monkeyPatched: (clazz) ->
     return null if clazz is null
     throw new Error('can only patch String and Number') if ['String', 'Number'].indexOf(clazz.name) is -1
     for k, v of be
       if typeof(v) is 'function' and clazz.name.toLowerCase() is typeof(v(null))
-        console.log(">>> patching '", k, "' function into", clazz.name, "class") unless this._quiet
+        console.log(">>> patching '", k, "' function into", clazz.name, "class") unless BeJS.quiet
         eval clazz.name + ".prototype['#{k}'] = function () { return be['#{k}'](this) };"
-    if this._quiet then undefined else clazz.name + ' patched!'
+    if @be_quiet then undefined else clazz.name + ' patched!'
 
 # Let me BeJS
-be = new BeJS
+be = new BeJS()
 
-# Am I running on Node.js or browser???
-if process? and process.title is 'node'
-  BeJS.environment = 'node'
+if be.environment is 'node'
   module.exports = be
 else
   window.be = be
