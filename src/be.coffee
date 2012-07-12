@@ -37,8 +37,9 @@ class BeJS
     throw new Error('can only patch String and Number') if ['String', 'Number'].indexOf(clazz.name) is -1
     for k, v of be
       if typeof(v) is 'function' and clazz.name.toLowerCase() is typeof(v(null))
-        console.log(">>> patching '", k, "' function into", clazz.name, "class") if this._quiet
-        patch = "be['" + k + "'](this)"
+        console.log(">>> patching '", k, "' function into", clazz.name, "class") unless this._quiet
+        patch = "be['" + k + "'](this)" unless this._quiet
+        console.log patch
         clazz.prototype[k] = ->
           eval patch
     if this._quiet then undefined else clazz.name + ' patched!'

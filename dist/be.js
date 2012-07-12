@@ -12,6 +12,16 @@ BeJS = (function() {
 
   BeJS.prototype.environment = 'browser';
 
+  BeJS.prototype._quiet = true;
+
+  BeJS.prototype.verbose = function() {
+    return this._quiet = false;
+  };
+
+  BeJS.prototype.quiet = function() {
+    return this._quiet = true;
+  };
+
   BeJS.prototype.time = function(value) {
     var h, m, s;
     if (value === null) {
@@ -67,27 +77,30 @@ BeJS = (function() {
   };
 
   BeJS.prototype.monkey_patch = function(clazz) {
-    var k, patch, v, _results;
+    var k, patch, v;
     if (clazz === null) {
       return null;
     }
     if (['String', 'Number'].indexOf(clazz.name) === -1) {
       throw new Error('can only patch String and Number');
     }
-    _results = [];
     for (k in be) {
       v = be[k];
       if (typeof v === 'function' && clazz.name.toLowerCase() === typeof (v(null))) {
-        console.log(">>> patching '", k, "' function into", clazz.name, "class");
+        if (this._quiet) {
+          console.log(">>> patching '", k, "' function into", clazz.name, "class");
+        }
         patch = "be['" + k + "'](this)";
-        _results.push(clazz.prototype[k] = function() {
+        clazz.prototype[k] = function() {
           return eval(patch);
-        });
-      } else {
-        _results.push(void 0);
+        };
       }
     }
-    return _results;
+    if (this._quiet) {
+      return void 0;
+    } else {
+      return clazz.name + ' patched!';
+    }
   };
 
   return BeJS;
