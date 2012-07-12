@@ -77,7 +77,7 @@ BeJS = (function() {
   };
 
   BeJS.prototype.monkey_patch = function(clazz) {
-    var k, patch, v;
+    var k, v;
     if (clazz === null) {
       return null;
     }
@@ -90,13 +90,7 @@ BeJS = (function() {
         if (!this._quiet) {
           console.log(">>> patching '", k, "' function into", clazz.name, "class");
         }
-        if (!this._quiet) {
-          patch = "be['" + k + "'](this)";
-        }
-        console.log(patch);
-        clazz.prototype[k] = function() {
-          return eval(patch);
-        };
+        eval(clazz.name + (".prototype['" + k + "'] = function () { return be['" + k + "'](this) };"));
       }
     }
     if (this._quiet) {
