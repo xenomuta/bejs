@@ -41,7 +41,7 @@ describe("Be", function(){
       be.shownAsTime(14400000).should.equal('04:00:00')
     })
     it('should return 00:00:00 when the argument is not a number', function(){
-      be.shownAsTime('string').should.equal('0:00:00')
+      be.shownAsTime('string').should.equal('00:00:00')
     })
   })
   describe("sentence",function(){

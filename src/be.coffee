@@ -2,10 +2,30 @@
 Be.js
 ###
 class BeJS
-  # Static class properties
-  this.injection_rx = new RegExp '([\'"<>\\$`\\[\\]()\\\\\\;%\\+])', 'g'
+  ###
+  Internals and Static class properties
+  ###
+  this.injectionRegExp = new RegExp '([\'"<>\\$`\\[\\]()\\\\\\;%\\+])', 'g'
+
   this.version = '0.1.0'  
+
   this.quiet = true
+    
+  this._withoutLast = (passed_array...) ->
+    passed_array.slice(0, passed_array.length - 1)
+   
+  this._last = (passed_array...) ->
+    passed_array.slice(-1)
+     
+  this._isArray = (obj)->
+    toString.call(obj) == '[object Array]'
+
+  this._isFunction = (obj)->
+    toString.call(obj) == '[object Function]'
+
+  this._isDate = (obj)->
+    toString.call(obj) == '[object Date]'
+
   
   # Constructor
   constructor: (doMonkeyPatch=false, verbose=false) ->
@@ -27,12 +47,12 @@ class BeJS
   ###
   shownAsTime: (value) ->
     return 0 if value is null
-    return [Number] if value is 'BeJS_monkey_patch'
-    return '00:00:00' if value is 0 or (typeof(value) is not 'number')
+    zeroTime = '00:00:00'
+    return zeroTime if value is 0 or (typeof(value) is not 'number')
     s = Math.floor (value / 1000) % 60
     m = Math.floor ((value / 1000) / 60) % 60
     h = Math.floor ((value / 1000) / 60) / 60
-
+    return zeroTime if isNaN(s) or isNaN(m) or isNaN(h)
     "#{if h > 9 then '' else '0'}#{h}:#{if m > 9 then '' else '0'}#{m}:#{if s > 9 then '' else '0'}#{s}"    
     
   ###
@@ -40,11 +60,11 @@ class BeJS
   ###
   sanitized: (value) ->
     return '' if value is null
-    value.toString().replace this.injection_rx, ''
+    value.toString().replace BeJS.injectionRegExp, ''
     
   safe: (value) ->
     return '' if value is null
-    value.toString().replace this.injection_rx, "\\$1"
+    value.toString().replace BeJS.injectionRegExp, "\\$1"
     
   stripped: (value) ->
     return '' if value is null
@@ -56,12 +76,17 @@ class BeJS
     
   capitalized: (value) ->
     return '' if value is null
+    ###
+    WARNING: Performance v.s. Aesthetic choice follows
+    Some might agree this code is uggly as hell, but I bet you sweat a lot trying to code a faster one...  ;)
+    Next best code I came up with runs 1.8 times slower... :S
+    ###
     value.toString().toLowerCase().replace(/(\b[a-z])/g, '_BeJS_CAP_$1').split(/_BeJS_CAP_/).map((w) -> (w[0] or '').toUpperCase() + w.substring 1).join('')
 
   sentence: (array...) ->
-    array = array[0] if this._isArray.apply(this, array)
+    array = array[0] if BeJS._isArray.apply(this, array)
     return array[0] if array.length == 1
-    [this._withoutLast.apply(this, array).join(', '), this._last.apply(this, array)].join(' and ')
+    [BeJS._withoutLast.apply(this, array).join(', '), BeJS._last.apply(this, array)].join(' and ')
   ###
   Monkey Patcher
   Expands String and Number classes by embedding functions into their prototypes
@@ -75,24 +100,6 @@ class BeJS
         console.log(">>> patching '", k, "' function into", clazz.name, "class") unless BeJS.quiet
         eval clazz.name + ".prototype['#{k}'] = function () { return be['#{k}'](this) };"
     if @be_quiet then undefined else clazz.name + ' patched!'
-    
-   ###
-   Internals
-   ###
-   _withoutLast: (passed_array...) ->
-     passed_array.slice(0, passed_array.length - 1)
-     
-   _last: (passed_array...) ->
-     passed_array.slice(-1)
-     
-   _isArray: (obj)->
-     toString.call(obj) == '[object Array]'
-     
-   _isFunction: (obj)->
-     toString.call(obj) == '[object Function]'
-
-   _isDate: (obj)->
-     toString.call(obj) == '[object Date]'
 
 # Let me BeJS
 be = new BeJS()
