@@ -58,6 +58,13 @@ class BeJS
     return '' if value is null
     value.toString().toLowerCase().replace(/(\b[a-z])/g, '_BeJS_CAP_$1').split(/_BeJS_CAP_/).map((w) -> (w[0] or '').toUpperCase() + w.substring 1).join('')
 
+  sentence: (array...) ->
+    if this._isArray.apply(this, array)
+      array = array[0]
+    return array[0] if array.length == 1
+    comma_joined = this._withoutLast.apply(this, array).join(', ')
+    last = this._last.apply(this, array)
+    [comma_joined, last].join(' and ')
   ###
   Monkey Patcher
   Expands String and Number classes by embedding functions into their prototypes
@@ -71,6 +78,18 @@ class BeJS
         console.log(">>> patching '", k, "' function into", clazz.name, "class") unless BeJS.quiet
         eval clazz.name + ".prototype['#{k}'] = function () { return be['#{k}'](this) };"
     if @be_quiet then undefined else clazz.name + ' patched!'
+    
+   ###
+   Internals
+   ###
+   _withoutLast: (passed_array...) ->
+     passed_array.slice(0, passed_array.length - 1)
+     
+   _last: (passed_array...) ->
+     passed_array.slice(-1)
+     
+   _isArray: (obj)->
+     obj.constructor == '[Function: Array]' || toString.call(obj) == '[object Array]'
 
 # Let me BeJS
 be = new BeJS()
