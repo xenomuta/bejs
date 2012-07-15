@@ -110,7 +110,7 @@ Be.js
     };
 
     BeJS.prototype.sentence = function() {
-      var array, comma_joined, last;
+      var array;
       array = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       if (this._isArray.apply(this, array)) {
         array = array[0];
@@ -118,9 +118,7 @@ Be.js
       if (array.length === 1) {
         return array[0];
       }
-      comma_joined = this._withoutLast.apply(this, array).join(', ');
-      last = this._last.apply(this, array);
-      return [comma_joined, last].join(' and ');
+      return [this._withoutLast.apply(this, array).join(', '), this._last.apply(this, array)].join(' and ');
     };
 
     /*
@@ -171,7 +169,15 @@ Be.js
     };
 
     BeJS.prototype._isArray = function(obj) {
-      return obj.constructor === '[Function: Array]' || toString.call(obj) === '[object Array]';
+      return toString.call(obj) === '[object Array]';
+    };
+
+    BeJS.prototype._isFunction = function(obj) {
+      return toString.call(obj) === '[object Function]';
+    };
+
+    BeJS.prototype._isDate = function(obj) {
+      return toString.call(obj) === '[object Date]';
     };
 
     return BeJS;

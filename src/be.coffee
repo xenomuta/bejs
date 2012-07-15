@@ -59,12 +59,9 @@ class BeJS
     value.toString().toLowerCase().replace(/(\b[a-z])/g, '_BeJS_CAP_$1').split(/_BeJS_CAP_/).map((w) -> (w[0] or '').toUpperCase() + w.substring 1).join('')
 
   sentence: (array...) ->
-    if this._isArray.apply(this, array)
-      array = array[0]
+    array = array[0] if this._isArray.apply(this, array)
     return array[0] if array.length == 1
-    comma_joined = this._withoutLast.apply(this, array).join(', ')
-    last = this._last.apply(this, array)
-    [comma_joined, last].join(' and ')
+    [this._withoutLast.apply(this, array).join(', '), this._last.apply(this, array)].join(' and ')
   ###
   Monkey Patcher
   Expands String and Number classes by embedding functions into their prototypes
@@ -89,7 +86,13 @@ class BeJS
      passed_array.slice(-1)
      
    _isArray: (obj)->
-     obj.constructor == '[Function: Array]' || toString.call(obj) == '[object Array]'
+     toString.call(obj) == '[object Array]'
+     
+   _isFunction: (obj)->
+     toString.call(obj) == '[object Function]'
+
+   _isDate: (obj)->
+     toString.call(obj) == '[object Date]'
 
 # Let me BeJS
 be = new BeJS()
