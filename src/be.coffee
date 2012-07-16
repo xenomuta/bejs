@@ -50,12 +50,12 @@ class BeJS
     return 0 if value is null
     Math.round(value * 100) / 100
 
-  between: (value...) ->
-    return 0 if value is null or value[0] is null
-    if value.length < 3
-      false
-    else
-      (value[0] >= value[1]) and (value[0] <= value[2])
+  between: (min=0, max=0) ->
+    if min > max
+      _tmp = min
+      max = min
+      min = _tmp
+    min + (Math.random() * (max - min))
 
   percentOf: (value...) ->
     return 0 if value is null or value[0] is null

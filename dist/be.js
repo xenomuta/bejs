@@ -10,8 +10,6 @@ BeJS = (function() {
     Internals and Static class properties
   */
 
-  BeJS.name = 'BeJS';
-
   BeJS.injectionRegExp = new RegExp('([\'"<>\\$`\\[\\]()\\\\\\;%\\+])', 'g');
 
   BeJS.version = '0.1.0';
@@ -87,17 +85,20 @@ BeJS = (function() {
     return Math.round(value * 100) / 100;
   };
 
-  BeJS.prototype.between = function() {
-    var value;
-    value = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    if (value === null || value[0] === null) {
-      return 0;
+  BeJS.prototype.between = function(min, max) {
+    var _tmp;
+    if (min == null) {
+      min = 0;
     }
-    if (value.length < 3) {
-      return false;
-    } else {
-      return (value[0] >= value[1]) && (value[0] <= value[2]);
+    if (max == null) {
+      max = 0;
     }
+    if (min > max) {
+      _tmp = min;
+      max = min;
+      min = _tmp;
+    }
+    return min + (Math.random() * (max - min));
   };
 
   BeJS.prototype.percentOf = function() {
@@ -225,7 +226,7 @@ BeJS = (function() {
       }
     }
     if (this.be_quiet) {
-      return;
+      return void 0;
     } else {
       return clazz.name + ' patched!';
     }

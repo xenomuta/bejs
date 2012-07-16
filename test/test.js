@@ -10,6 +10,9 @@ describe("Be", function () {
     it('should convert HTML to plain text', function () {
       be.plainText('<div><span>Testing</span><br>plaintext</div>').should.equal("Testing\nplaintext")
     });
+    it('should work as expected when monkeyPatched()', function () {
+      '<div><span>Testing</span><br>plaintext</div>'.plainText().should.equal("Testing\nplaintext")
+    });
   })
   describe("safe", function () {
     it('should escape SQL injections unsafe chars', function () {
@@ -86,13 +89,8 @@ describe("Be", function () {
     });
   });
   describe("between", function () {
-    it('should return if number is between given range', function () {
-      be.between(15, 0, 20).should.equal(true);
-      be.between(10, 0, 9).should.equal(false);
-    });
-    it('should work as expected when monkeyPatched()', function () {
-      (15).between(0, 20).should.equal(true);
-      (10).between(0, 9).should.equal(false);
+    it('should return numbers between given range', function () {
+      be.between(1, 10).should.be.within(1, 10)
     });
   });
   describe("percentOf", function () {
