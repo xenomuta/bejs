@@ -27,12 +27,13 @@ class BeJS
     toString.call(obj) == '[object Date]'
 
   
-  # Constructor
+  ###
+  Constructor
+  ###
   constructor: (doMonkeyPatch=false, verbose=false) ->
     @monkeyPatch(clazz) for clazz in [String, Number] if doMonkeyPatch
     @environment = 'browser'
     BeJS.quiet = !verbose
-
     # Am I running on Node.js or browser???
     @environment = if process? and process.title is 'node' then 'node' else 'browser'
   
@@ -45,6 +46,24 @@ class BeJS
   ###
   Number functions
   ###
+  twoDecimals: (value) ->
+    return 0 if value is null
+    Math.round(value * 100) / 100
+
+  between: (value...) ->
+    return 0 if value is null or value[0] is null
+    if value.length < 3
+      false
+    else
+      (value[0] >= value[1]) and (value[0] <= value[2])
+
+  percentOf: (value...) ->
+    return 0 if value is null or value[0] is null
+    if value.length < 2
+      0
+    else
+      (value[0] / value[1]) * 100
+
   shownAsTime: (value) ->
     return 0 if value is null
     zeroTime = '00:00:00'
@@ -53,11 +72,15 @@ class BeJS
     m = Math.floor ((value / 1000) / 60) % 60
     h = Math.floor ((value / 1000) / 60) / 60
     return zeroTime if isNaN(s) or isNaN(m) or isNaN(h)
-    "#{if h > 9 then '' else '0'}#{h}:#{if m > 9 then '' else '0'}#{m}:#{if s > 9 then '' else '0'}#{s}"    
+    "#{if h > 9 then '' else '0'}#{h}:#{if m > 9 then '' else '0'}#{m}:#{if s > 9 then '' else '0'}#{s}"
     
   ###
   String functions
   ###
+  plainText: (value) ->
+    return '' if value is null
+    value.replace(/<br[^>]*>/ig, "\n").replace(/<[^>]*>/g, '')
+
   sanitized: (value) ->
     return '' if value is null
     value.toString().replace BeJS.injectionRegExp, ''
@@ -84,21 +107,22 @@ class BeJS
     value.toString().toLowerCase().replace(/(\b[a-z])/g, '_BeJS_CAP_$1').split(/_BeJS_CAP_/).map((w) -> (w[0] or '').toUpperCase() + w.substring 1).join('')
 
   sentence: (array...) ->
+    return '' if array is null or array[0] is null
     array = array[0] if BeJS._isArray.apply(this, array)
     return array[0] if array.length == 1
     [BeJS._withoutLast.apply(this, array).join(', '), BeJS._last.apply(this, array)].join(' and ')
+
   ###
   Monkey Patcher
   Expands String and Number classes by embedding functions into their prototypes
   ###
-
   monkeyPatched: (clazz) ->
     return null if clazz is null
     throw new Error('can only patch String and Number') if ['String', 'Number'].indexOf(clazz.name) is -1
     for k, v of be
       if typeof(v) is 'function' and clazz.name.toLowerCase() is typeof(v(null))
         console.log(">>> patching '", k, "' function into", clazz.name, "class") unless BeJS.quiet
-        eval clazz.name + ".prototype['#{k}'] = function () { return be['#{k}'](this) };"
+        eval clazz.name + ".prototype.#{k}=function(){var _=this;_=[JSON.stringify(this)];for(var i in arguments)_.push(arguments[i]);return eval(\"be['#{k}'](\"+_.join(\",\")+\")\")};"
     if @be_quiet then undefined else clazz.name + ' patched!'
 
 # Let me BeJS

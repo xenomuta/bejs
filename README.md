@@ -1,6 +1,6 @@
 Be.js
 =====
-_Shakespear approved!_
+_Shakespeare approved!_
 
 ![to Be.js or not to Be](https://github.com/xenomuta/bejs/raw/master/dist/bejs.gif "to Be.js or not to be")
 

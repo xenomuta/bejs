@@ -42,6 +42,11 @@ BeJS = (function() {
     return toString.call(obj) === '[object Date]';
   };
 
+  /*
+    Constructor
+  */
+
+
   function BeJS(doMonkeyPatch, verbose) {
     var clazz, _i, _len, _ref;
     if (doMonkeyPatch == null) {
@@ -75,6 +80,39 @@ BeJS = (function() {
   */
 
 
+  BeJS.prototype.twoDecimals = function(value) {
+    if (value === null) {
+      return 0;
+    }
+    return Math.round(value * 100) / 100;
+  };
+
+  BeJS.prototype.between = function() {
+    var value;
+    value = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+    if (value === null || value[0] === null) {
+      return 0;
+    }
+    if (value.length < 3) {
+      return false;
+    } else {
+      return (value[0] >= value[1]) && (value[0] <= value[2]);
+    }
+  };
+
+  BeJS.prototype.percentOf = function() {
+    var value;
+    value = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+    if (value === null || value[0] === null) {
+      return 0;
+    }
+    if (value.length < 2) {
+      return 0;
+    } else {
+      return (value[0] / value[1]) * 100;
+    }
+  };
+
   BeJS.prototype.shownAsTime = function(value) {
     var h, m, s, zeroTime;
     if (value === null) {
@@ -97,6 +135,13 @@ BeJS = (function() {
     String functions
   */
 
+
+  BeJS.prototype.plainText = function(value) {
+    if (value === null) {
+      return '';
+    }
+    return value.replace(/<br[^>]*>/ig, "\n").replace(/<[^>]*>/g, '');
+  };
 
   BeJS.prototype.sanitized = function(value) {
     if (value === null) {
@@ -144,6 +189,9 @@ BeJS = (function() {
   BeJS.prototype.sentence = function() {
     var array;
     array = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+    if (array === null || array[0] === null) {
+      return '';
+    }
     if (BeJS._isArray.apply(this, array)) {
       array = array[0];
     }
@@ -173,7 +221,7 @@ BeJS = (function() {
         if (!BeJS.quiet) {
           console.log(">>> patching '", k, "' function into", clazz.name, "class");
         }
-        eval(clazz.name + (".prototype['" + k + "'] = function () { return be['" + k + "'](this) };"));
+        eval(clazz.name + (".prototype." + k + "=function(){var _=this;_=[JSON.stringify(this)];for(var i in arguments)_.push(arguments[i]);return eval(\"be['" + k + "'](\"+_.join(\",\")+\")\")};"));
       }
     }
     if (this.be_quiet) {
