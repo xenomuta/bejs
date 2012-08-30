@@ -1,4 +1,4 @@
-{ "name": "be.js"
+{ "name": "be"
 , "version": "0.0.1"
 , "engines": ["node >= 0.4.0"]
 , "main": "dist/be.js"
