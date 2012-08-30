@@ -1,0 +1,92 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node', '/usr/local/bin/npm', 'publish' ]
+2 info using npm@1.1.33
+3 info using node@v0.8.1
+4 verbose config file /Users/xenomuta/.npmrc
+5 verbose config file /usr/local/etc/npmrc
+6 verbose config file /usr/local/lib/node_modules/npm/npmrc
+7 verbose publish [ '.' ]
+8 verbose read json /Users/xenomuta/Codigo/be/package.json
+9 verbose cache add [ '.', null ]
+10 silly cache add name=undefined spec="." args=[".",null]
+11 verbose parsed url { pathname: '.', path: '.', href: '.' }
+12 verbose lock . /Users/xenomuta/.npm/3a52ce780950d4d969792a2559cd519d7ee8c727--.lock
+13 verbose read json package.json
+14 verbose tar pack [ '/var/folders/b2/hfbp79bd48zcz_q7x5dt1_ph0000gp/T/npm-28336/1346355938722-0.816440029302612/tmp.tgz',
+14 verbose tar pack   '.' ]
+15 verbose tarball /var/folders/b2/hfbp79bd48zcz_q7x5dt1_ph0000gp/T/npm-28336/1346355938722-0.816440029302612/tmp.tgz
+16 verbose folder .
+17 info prepublish Be.js@0.0.1
+18 verbose tar unpack /var/folders/b2/hfbp79bd48zcz_q7x5dt1_ph0000gp/T/npm-28336/1346355938722-0.816440029302612/tmp.tgz
+19 silly gunzTarPerm modes [ '755', '644' ]
+20 silly gunzTarPerm extractEntry package.json
+21 silly gunzTarPerm extractEntry .npmignore
+22 silly gunzTarPerm extractEntry README.md
+23 silly gunzTarPerm extractEntry build.coffee
+24 silly gunzTarPerm extractEntry dist/be.js
+25 silly gunzTarPerm extractEntry dist/be.min.js
+26 silly gunzTarPerm extractEntry dist/bejs.gif
+27 silly gunzTarPerm extractEntry src/be.coffee
+28 silly gunzTarPerm extractEntry test/test.js
+29 verbose read json /var/folders/b2/hfbp79bd48zcz_q7x5dt1_ph0000gp/T/npm-28336/1346355938722-0.816440029302612/package/package.json
+30 verbose from cache /var/folders/b2/hfbp79bd48zcz_q7x5dt1_ph0000gp/T/npm-28336/1346355938722-0.816440029302612/package/package.json
+31 verbose tar pack [ '/Users/xenomuta/.npm/Be.js/0.0.1/package.tgz',
+31 verbose tar pack   '/var/folders/b2/hfbp79bd48zcz_q7x5dt1_ph0000gp/T/npm-28336/1346355938722-0.816440029302612/package' ]
+32 verbose tarball /Users/xenomuta/.npm/Be.js/0.0.1/package.tgz
+33 verbose folder /var/folders/b2/hfbp79bd48zcz_q7x5dt1_ph0000gp/T/npm-28336/1346355938722-0.816440029302612/package
+34 verbose tar unpack /Users/xenomuta/.npm/Be.js/0.0.1/package.tgz
+35 silly gunzTarPerm modes [ '755', '644' ]
+36 silly gunzTarPerm extractEntry package.json
+37 silly gunzTarPerm extractEntry .npmignore
+38 silly gunzTarPerm extractEntry README.md
+39 silly gunzTarPerm extractEntry build.coffee
+40 silly gunzTarPerm extractEntry dist/be.js
+41 silly gunzTarPerm extractEntry dist/be.min.js
+42 silly gunzTarPerm extractEntry dist/bejs.gif
+43 silly gunzTarPerm extractEntry src/be.coffee
+44 silly gunzTarPerm extractEntry test/test.js
+45 verbose read json /Users/xenomuta/.npm/Be.js/0.0.1/package/package.json
+46 silly shasum updated bytes 9703
+47 info shasum 05fe99e2284294a8a070d6f6dadab4a686c02531
+47 info shasum /Users/xenomuta/.npm/Be.js/0.0.1/package.tgz
+48 verbose from cache /Users/xenomuta/.npm/Be.js/0.0.1/package/package.json
+49 verbose chmod /Users/xenomuta/.npm/Be.js/0.0.1/package.tgz 644
+50 verbose chown /Users/xenomuta/.npm/Be.js/0.0.1/package.tgz [ 502, 20 ]
+51 silly publish { name: 'Be.js',
+51 silly publish   version: '0.0.1',
+51 silly publish   engines: [ 'node >= 0.4.0' ],
+51 silly publish   main: 'dist/be.js',
+51 silly publish   readme: 'Be.js\n=====\n_Shakespeare approved!_\n\n![to Be.js or not to Be](https://github.com/xenomuta/bejs/raw/master/dist/bejs.gif "to Be.js or not to be")\n\n### What is Be.js?\nBe.js is a library for Web Browsers and [Node.js](http://nodejs.org "Node.js") that shortens and [DRY](http://en.wikipedia.org/wiki/DRY "DRY")es the way you interact with simple, yet, repetitive string and number manipulations, conversions and operations, the right way, by providing simple and easy to use functions for minimizing error prone tasks, with performance and compatibility in focus.\n\n### Philosophy:\n* Be friendly. Don\'t get in the way of other libraries, play well.\n* Be easy and self-explanatory. Code as manual. Code as poetry.\n* Be faster. Favor speed over aesthetics in the core.\n* Be lightweight. No dependencies.\n* Be worries free.\n* Be fun to use.\n* Be transparent. Consistent between different javascript runtimes environments and browser.\n* Be modular. Designed to be easily hacked and easily plugged in.\n\n### Examples:\n\n...\n\n### Installation:\n\n...\n\n',
+51 silly publish   _id: 'Be.js@0.0.1',
+51 silly publish   description: 'Be.js ===== _Shakespeare approved!_',
+51 silly publish   dist: { shasum: '05fe99e2284294a8a070d6f6dadab4a686c02531' } }
+52 verbose url raw Be.js
+53 verbose url resolving [ 'https://registry.npmjs.org/', './Be.js' ]
+54 verbose url resolved https://registry.npmjs.org/Be.js
+55 info retry registry request attempt 1 at 15:45:38
+56 http PUT https://registry.npmjs.org/Be.js
+57 http 403 https://registry.npmjs.org/Be.js
+58 error publish Failed PUT response 403
+59 error Error: forbidden New packages must have all-lowercase names: Be.js
+59 error     at RegClient.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:211:14)
+59 error     at Request.init.self.callback (/usr/local/lib/node_modules/npm/node_modules/request/main.js:119:22)
+59 error     at Request.EventEmitter.emit (events.js:91:17)
+59 error     at Request.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/main.js:521:16)
+59 error     at Request.EventEmitter.emit (events.js:88:17)
+59 error     at IncomingMessage.Request.start.self.req.self.httpModule.request.buffer (/usr/local/lib/node_modules/npm/node_modules/request/main.js:483:14)
+59 error     at IncomingMessage.EventEmitter.emit (events.js:115:20)
+59 error     at IncomingMessage._emitEnd (http.js:366:10)
+59 error     at HTTPParser.parserOnMessageComplete [as onMessageComplete] (http.js:149:23)
+59 error     at CleartextStream.socketOnData [as ondata] (http.js:1356:20)
+59 error  [Error: forbidden New packages must have all-lowercase names: Be.js]
+60 error You may report this log at:
+60 error     <http://github.com/isaacs/npm/issues>
+60 error or email it to:
+60 error     <npm-@googlegroups.com>
+61 error System Darwin 11.4.0
+62 error command "node" "/usr/local/bin/npm" "publish"
+63 error cwd /Users/xenomuta/Codigo/be
+64 error node -v v0.8.1
+65 error npm -v 1.1.33
+66 error message forbidden New packages must have all-lowercase names: Be.js
+67 verbose exit [ 1, true ]
