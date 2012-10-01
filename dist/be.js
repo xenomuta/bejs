@@ -62,7 +62,7 @@ BeJS = (function() {
     }
     this.environment = 'browser';
     BeJS.quiet = !verbose;
-    this.environment = (typeof process !== "undefined" && process !== null) && process.title === 'node' ? 'node' : 'browser';
+    this.environment = (typeof process !== "undefined" && process !== null) && (typeof module !== "undefined" && module !== null) && module.exports ? 'node' : 'browser';
   }
 
   BeJS.prototype.verbose = function() {
