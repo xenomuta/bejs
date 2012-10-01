@@ -7,16 +7,16 @@ class BeJS
   ###
   this.injectionRegExp = new RegExp '([\'"<>\\$`\\[\\]()\\\\\\;%\\+])', 'g'
 
-  this.version = '0.1.0'  
+  this.version = '0.1.0'
 
   this.quiet = true
-    
+
   this._withoutLast = (passed_array...) ->
     passed_array.slice(0, passed_array.length - 1)
-   
+
   this._last = (passed_array...) ->
     passed_array.slice(-1)
-     
+
   this._isArray = (obj)->
     toString.call(obj) == '[object Array]'
 
@@ -26,7 +26,7 @@ class BeJS
   this._isDate = (obj)->
     toString.call(obj) == '[object Date]'
 
-  
+
   ###
   Constructor
   ###
@@ -35,11 +35,11 @@ class BeJS
     @environment = 'browser'
     BeJS.quiet = !verbose
     # Am I running on Node.js or browser???
-    @environment = if process? and process.title is 'node' then 'node' else 'browser'
-  
+    @environment = if process? and module? and module.exports then 'node' else 'browser'
+
   verbose: ->
     BeJS.quiet = false
-    
+
   quiet: ->
     BeJS.quiet = true
 
@@ -73,7 +73,7 @@ class BeJS
     h = Math.floor ((value / 1000) / 60) / 60
     return zeroTime if isNaN(s) or isNaN(m) or isNaN(h)
     "#{if h > 9 then '' else '0'}#{h}:#{if m > 9 then '' else '0'}#{m}:#{if s > 9 then '' else '0'}#{s}"
-    
+
   ###
   String functions
   ###
@@ -84,19 +84,19 @@ class BeJS
   sanitized: (value) ->
     return '' if value is null
     value.toString().replace BeJS.injectionRegExp, ''
-    
+
   safe: (value) ->
     return '' if value is null
     value.toString().replace BeJS.injectionRegExp, "\\$1"
-    
+
   stripped: (value) ->
     return '' if value is null
     value.toString().replace /(^ +| +$)/g, ''
-    
+
   slugified: (value) ->
     return '' if value is null
     this.stripped(value.toString().toLowerCase()).replace(/\W+/g, '_').replace(/_+$/g, '')
-    
+
   capitalized: (value) ->
     return '' if value is null
     ###
